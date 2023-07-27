@@ -1,0 +1,14 @@
+<h2>List of books</h2>
+<input type="text" [(ngModel)]="searchTerm">
+<div>
+    <div *ngFor="let book of filterBooks(); let i =index">
+        <p>{{book.title}}</p>
+        <p>{{book.author}}</p>
+        <p>{{book.year}}</p>
+        <button (click)="deteleBook(i)">Delete</button>
+    </div>
+    
+</div>
+
+
+<app-book-add></app-book-add>
