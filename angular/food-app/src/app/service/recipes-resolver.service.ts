@@ -7,7 +7,7 @@ import {
 import { Recipe } from '../model/recipe.model';
 import { DataStorageService } from './data-storage.service';
 import { Observable } from 'rxjs';
-import { RecipeServiceService } from '../service/recipe-service.service';
+import { RecipeServiceService } from './recipe-service.service';
 
 export const RecipesResolverService: ResolveFn<Recipe[]> = (
   route: ActivatedRouteSnapshot,
@@ -18,6 +18,6 @@ export const RecipesResolverService: ResolveFn<Recipe[]> = (
   const recipe = recipes.getRecipes();
   if (recipe.length === 0) {
     return dataService.fetchRecipes();
-  } 
-  return null
+  }
+  return null;
 };

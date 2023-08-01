@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg bg-light">
+<nav class="navbar navbar-expand-lg bg-light mb-3">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">Recipe Book</a>
     <button
@@ -20,6 +20,7 @@
             aria-current="page"
             routerLink="/recipes"
             routerLinkActive="active"
+            *ngIf="isAuthentificated"
             >Recipe</a
           >
         </li>
@@ -31,10 +32,24 @@
             >Shopping List</a
           >
         </li>
+        <li class="nav-item" *ngIf="!isAuthentificated">
+          <a class="nav-link" routerLinkActive="active" routerLink="/auth"
+            >Authenticate</a
+          >
+        </li>
       </ul>
 
       <ul class="navbar-nav me-right mb-2 mb-lg-0">
-        <li class="nav-item dropdown">
+        <li class="nav-item">
+          <a
+            style="cursor: pointer"
+            class="nav-link"
+            *ngIf="isAuthentificated"
+            (click)="logout()"
+            >Logout</a
+          >
+        </li>
+        <li class="nav-item dropdown" *ngIf="isAuthentificated">
           <a
             class="nav-link dropdown-toggle"
             role="button"
@@ -44,8 +59,12 @@
             Manage
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" (click)="onSaveData()">Save Data</a></li>
-            <li><a class="dropdown-item" (click)="onFetchData()">Fetch Data</a></li>
+            <li>
+              <a class="dropdown-item" (click)="onSaveData()">Save Data</a>
+            </li>
+            <li>
+              <a class="dropdown-item" (click)="onFetchData()">Fetch Data</a>
+            </li>
           </ul>
         </li>
       </ul>
