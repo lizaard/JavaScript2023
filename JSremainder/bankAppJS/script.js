@@ -1,4 +1,16 @@
 "use strict";
+// const userAction = async function logMovies() {
+//   const response = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=10");
+//   const movies = await response.json();
+//   console.log(movies);
+// }
+// userAction();
+
+// (async ()=> {
+//   const response = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=10");
+//   const movies = await response.json();
+//   console.log(movies);
+// })();
 
 const account1 = {
   owner: "Jonas Schmedtmann",
@@ -48,9 +60,14 @@ const inputLoanAmount = document.querySelector(".form__input--loan-amount");
 const inputCloseUsername = document.querySelector(".form__input--user");
 const inputClosePin = document.querySelector(".form__input--pin");
 
-const displayMovements = function (movements) {
+const displayMovements = function (movements, sort = sorted) {
   containerMovements.innerHTML = "";
-  movements.forEach((movement, index) => {
+
+  const sortedMovements = sort
+    ? movements.slice().sort((a, b) => a - b)
+    : movements;
+
+  sortedMovements.forEach((movement, index) => {
     const type = movement > 0 ? "deposit" : "withdrawal";
 
     const html = `
@@ -65,12 +82,12 @@ const displayMovements = function (movements) {
   });
 };
 
-const calcDisplayBalance = (movements) => {
-  const balance = movements.reduce((acc, mov) => {
+const calcDisplayBalance = (acc) => {
+  acc.balance = acc.movements.reduce((acc, mov) => {
     return acc + mov;
   }, 0);
 
-  labelBalance.textContent = `${balance} EURO`;
+  labelBalance.textContent = `${acc.balance} EURO`;
 };
 
 const calcDisplaySummary = (account) => {
@@ -109,8 +126,13 @@ const createUsername = (acc) => {
 };
 createUsername(accounts);
 
-let currentAccount;
+const updateUi = (currentAccount) => {
+  displayMovements(currentAccount.movements);
+  calcDisplayBalance(currentAccount);
+  calcDisplaySummary(currentAccount);
+};
 
+let currentAccount;
 btnLogin.addEventListener("click", (event) => {
   // Prevent form for submit
   event.preventDefault();
@@ -131,8 +153,63 @@ btnLogin.addEventListener("click", (event) => {
     inputLoginUsername.value = inputLoginPin.value = "";
     inputLoginPin.blur();
     // display and calculate balance
-    displayMovements(currentAccount.movements);
-    calcDisplayBalance(currentAccount.movements);
-    calcDisplaySummary(currentAccount);
+    updateUi(currentAccount);
   }
+});
+
+btnClose.addEventListener("click", (e) => {
+  e.preventDefault();
+  if (
+    Number(inputClosePin.value) == currentAccount.pin &&
+    inputCloseUsername.value == currentAccount.username
+  ) {
+    const index = accounts.findIndex(
+      (i) => i.username === currentAccount.username
+    );
+    accounts.splice(index, 1);
+    labelWelcome.textContent = `Log in to get started`;
+    containerApp.style.opacity = 0;
+    containerApp.style.visibility = "hidden";
+    // location.reload();
+  }
+});
+
+btnTransfer.addEventListener("click", (e) => {
+  e.preventDefault();
+  const amount = Number(inputTransferAmount.value);
+  const receiverAcc = accounts.find(
+    (acc) => acc.username === inputTransferTo.value
+  );
+
+  inputTransferAmount.value = inputTransferTo.value = "";
+
+  if (
+    amount > 0 &&
+    amount <= currentAccount.balance &&
+    receiverAcc?.username !== currentAccount.username &&
+    receiverAcc
+  ) {
+    currentAccount.movements.push(-amount);
+    receiverAcc.movements.push(amount);
+    updateUi(currentAccount);
+  }
+});
+
+btnLoan.addEventListener("click", (e) => {
+  e.preventDefault();
+  let loadAmount = Number(inputLoanAmount.value);
+  let loadAmountCondition = currentAccount.movements.some(
+    (mov) => mov >= loadAmount * 0.1
+  );
+  if (loadAmount > 0 && loadAmountCondition) {
+    currentAccount.movements.push(loadAmount);
+    inputLoanAmount.value = "";
+    updateUi(currentAccount);
+  }
+});
+let sorted = false;
+btnSort.addEventListener("click", (e) => {
+  e.preventDefault();
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
 });
