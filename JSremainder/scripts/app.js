@@ -242,3 +242,155 @@ console.log(firstWithdrawal);
 
 const account = accountes.find((acc) => acc.owner === "Alamin Mt");
 console.log(account);
+
+console.log(new Array(7).fill(1, 3, 5));
+
+const dice = Array.from({ length: 100 }, (_, i) => i + 1).sort(
+  () => 0.5 - Math.random()
+);
+console.log(dice);
+
+const calcMovements = (accounts) => {
+  let calc = accounts
+    .flatMap((acc) => acc.movements)
+    // .map((acc) => acc.movements)
+    // .flat()
+    .reduce((acc, cur) => acc + cur, 0);
+
+  console.log(calc);
+};
+calcMovements(accountes);
+
+const calcDepositeSums = (accounts) => {
+  let calc = accounts
+    .flatMap((acc) => acc.movements)
+    .filter((pos) => pos > 0)
+    .reduce((acc, cur) => acc + cur, 0);
+
+  console.log(calc);
+};
+calcDepositeSums(accountes);
+
+const calcDepositeSumPositive = (accounts) => {
+  let calc = accounts
+    .flatMap((acc) => acc.movements)
+    .filter((pos) => pos > 1000);
+  console.log(calc);
+};
+calcDepositeSumPositive(accountes);
+
+const calcDepositeSumPositiveLength = (accounts) => {
+  let calc = accounts
+    .flatMap((acc) => acc.movements)
+    .reduce((count, cur) => (cur >= 1000 ? ++count : count), 0);
+  console.log(calc);
+};
+calcDepositeSumPositiveLength(accountes);
+
+const calcDepositeSumPositiveAndNegative = (accounts) => {
+  let { deposite, withdrew } = accounts
+    .flatMap((acc) => acc.movements)
+    .reduce(
+      (sums, cur) => {
+        // cur > 0 ? (sums.deposite += cur) : (sums.withdrew += cur);
+
+        sums[cur > 0 ? "deposite" : "withdrew"] += cur;
+        return sums;
+      },
+      { deposite: 0, withdrew: 0 }
+    );
+  console.log(deposite, withdrew);
+
+  let calcWithdraw = accounts
+    .flatMap((acc) => acc.movements)
+    .filter((pos) => pos < 0)
+    .reduce((acc, cur) => acc + cur, 0);
+  console.log(calcWithdraw);
+  let calcDeposite = accounts
+    .flatMap((acc) => acc.movements)
+    .filter((pos) => pos > 0)
+    .reduce((acc, cur) => acc + cur, 0);
+  console.log(calcDeposite);
+};
+calcDepositeSumPositiveAndNegative(accountes);
+
+const strings = ["asdasda", "asdasda", "asdasdas", "asdasda"];
+
+console.log(
+  strings.map((title) => title.charAt(0).toUpperCase() + title.slice(1))
+);
+
+//////////////////////////////////////////////////////////////////////////////////
+
+const dogs = [
+  {
+    weight: 22,
+    curFood: 250,
+    owners: ["Alice", "Bob"],
+  },
+  {
+    weight: 8,
+    curFood: 200,
+    owners: ["Matilda"],
+  },
+  {
+    weight: 13,
+    curFood: 275,
+    owners: ["Sarah", "John"],
+  },
+  {
+    weight: 32,
+    curFood: 340,
+    owners: ["Michael"],
+  },
+];
+
+const recommendedFood = (dogs) => {
+  dogs.forEach(
+    (dog) => (dog.recommendedFood = Math.trunc(dog.weight ** 0.75 * 28))
+  );
+};
+
+recommendedFood(dogs);
+console.log(dogs);
+
+const findOwnerDog = (dogs) => {
+  const sarahDog = dogs.find((dog) => dog.owners.includes("Sarah"));
+  const above = sarahDog.curFood > sarahDog.recommendedFood * 0.9;
+  const below = sarahDog.curFood < sarahDog.recommendedFood * 1.1;
+  if (above) {
+    console.log("Is eating to much");
+  } else if (below) {
+    console.log("Is eating to little");
+  }
+};
+findOwnerDog(dogs);
+
+const separteOwners = (dogs) => {
+  let overWeight = dogs
+    .filter((dog) => dog.curFood > dog.recommendedFood)
+    .flatMap((dog) => dog.owners);
+
+  let subWeight = dogs
+    .filter((dog) => dog.curFood < dog.recommendedFood)
+    .flatMap((dog) => dog.owners);
+  console.log(overWeight);
+  console.log(subWeight);
+  console.log(`${overWeight.join(" and ")} dogs eat to much`);
+  console.log(`${subWeight.join(" and ")} dogs eat to little`);
+};
+
+separteOwners(dogs);
+
+console.log(dogs.some((dog) => dog.curFood === dog.recommendedFood));
+const checkFoodAmount = (doge) =>
+  doge.curFood > doge.recommendedFood * 0.9 &&
+  doge.curFood < doge.recommendedFood * 1.1;
+console.log(dogs.some(checkFoodAmount));
+
+console.log(dogs.filter(checkFoodAmount));
+
+const dogsCopy = dogs
+  .slice()
+  .sort((a, b) => a.recommendedFood - b.recommendedFood);
+console.log(dogsCopy);
