@@ -1,27 +1,37 @@
-"use strict";
-// const userAction = async function logMovies() {
-//   const response = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=10");
-//   const movies = await response.json();
-//   console.log(movies);
-// }
-// userAction();
-
-// (async ()=> {
-//   const response = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=10");
-//   const movies = await response.json();
-//   console.log(movies);
-// })();
-
+export let text = "asdasdasd";
 const account1 = {
   owner: "Jonas Schmedtmann",
-  movements: [200, 455, -307, 25000, -642, -134, 80, 1300],
-  interestRate: 1.2,
+  movements: [200, 455.23, -306.5, 25000, -642.21, -133.9, 79.97, 1300],
+  interestRate: 1.2, // %
   pin: 1111,
+
+  movementsDates: [
+    "2019-11-18T21:31:17.178Z",
+    "2019-12-23T07:42:02.383Z",
+    "2020-01-28T09:15:04.904Z",
+    "2020-04-01T10:17:24.185Z",
+    "2020-05-08T14:11:59.604Z",
+    "2020-05-27T17:01:17.194Z",
+    "2020-07-11T23:36:17.929Z",
+    "2020-07-12T10:51:36.790Z",
+  ],
+  currency: "EUR",
+  locale: "pt-PT", // de-DE
 };
 
 const account2 = {
   owner: "Alamin Mt",
   movements: [2500, 400, -260, 830, -4210, 2200, 4600, -70],
+  movementsDates: [
+    "2019-11-18T21:31:17.178Z",
+    "2019-12-23T07:42:02.383Z",
+    "2020-01-28T09:15:04.904Z",
+    "2020-04-01T10:17:24.185Z",
+    "2020-05-08T14:11:59.604Z",
+    "2020-05-27T17:01:17.194Z",
+    "2020-07-11T23:36:17.929Z",
+    "2020-07-12T10:51:36.790Z",
+  ],
   interestRate: 1.8,
   pin: 2222,
 };
@@ -33,15 +43,15 @@ const account3 = {
   pin: 3333,
 };
 
-const accounts = [account1, account2, account3];
+export const accounts = [account1, account2, account3];
 // Elements
 const labelWelcome = document.querySelector(".welcome");
-const labelDate = document.querySelector(".date");
-const labelBalance = document.querySelector(".balance__value");
+export const labelDate = document.querySelector(".date");
+export const labelBalance = document.querySelector(".balance__value");
 const labelSumIn = document.querySelector(".summary__value--in");
 const labelSumOut = document.querySelector(".summary__value--out");
 const labelSumInterest = document.querySelector(".summary__value--interest");
-const labelTimer = document.querySelector(".timer");
+export const labelTimer = document.querySelector(".timer");
 
 const containerApp = document.querySelector(".app");
 const containerMovements = document.querySelector(".movements");
@@ -60,21 +70,27 @@ const inputLoanAmount = document.querySelector(".form__input--loan-amount");
 const inputCloseUsername = document.querySelector(".form__input--user");
 const inputClosePin = document.querySelector(".form__input--pin");
 
-const displayMovements = function (movements, sort = sorted) {
+const displayMovements = function (acc, sort = sorted) {
   containerMovements.innerHTML = "";
 
   const sortedMovements = sort
-    ? movements.slice().sort((a, b) => a - b)
-    : movements;
+    ? acc.movements.slice().sort((a, b) => a - b)
+    : acc.movements;
 
   sortedMovements.forEach((movement, index) => {
     const type = movement > 0 ? "deposit" : "withdrawal";
 
+    const date = new Date(acc.movementsDates[index]);
+    const day = `${date.getDate()}`.padStart(2, 0);
+    const month = `${date.getMonth() + 1}`.padStart(2, 0);
+    const year = date.getFullYear();
+    const displayDate = `${day}/${month}/${year}`;
     const html = `
-    <div class="movements__row">
+    <div class="movements__row" style="display: flex; justify-content: space-between;">
     <div class="movements__type movements__type--${type}">
     ${index + 1} ${type}</div>
-    <div class=movements__value">${movement}</div>
+    <div class="movements__date">${displayDate}</div>
+    <div class=movements__value">${movement.toFixed(2)}</div>
     </div>
     `;
 
@@ -87,7 +103,7 @@ const calcDisplayBalance = (acc) => {
     return acc + mov;
   }, 0);
 
-  labelBalance.textContent = `${acc.balance} EURO`;
+  labelBalance.textContent = `${acc.balance.toFixed(2)} EURO`;
 };
 
 const calcDisplaySummary = (account) => {
@@ -96,21 +112,21 @@ const calcDisplaySummary = (account) => {
       return move > 0;
     })
     .reduce((acc, cur) => acc + cur, 0);
-  labelSumIn.textContent = `${incomes} EURO`;
+  labelSumIn.textContent = `${incomes.toFixed(2)} EURO`;
 
   const out = account.movements
     .filter((move) => {
       return move < 0;
     })
     .reduce((acc, cur) => acc + cur, 0);
-  labelSumOut.textContent = `${Math.abs(out)} EURO`;
+  labelSumOut.textContent = `${Math.abs(out).toFixed(2)} EURO`;
 
   const interest = account.movements
     .filter((mov) => mov > 0)
     .map((deposite) => (deposite * account.interestRate) / 100)
     .filter((int) => int >= 1)
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest} EURO`;
+  labelSumInterest.textContent = `${interest.toFixed(2)} EURO`;
 };
 
 const createUsername = (acc) => {
@@ -127,12 +143,18 @@ const createUsername = (acc) => {
 createUsername(accounts);
 
 const updateUi = (currentAccount) => {
-  displayMovements(currentAccount.movements);
+  displayMovements(currentAccount);
   calcDisplayBalance(currentAccount);
   calcDisplaySummary(currentAccount);
 };
 
 let currentAccount;
+
+// currentAccount = account1;
+// updateUi(currentAccount)
+// containerApp.style.opacity = 100;
+// containerApp.style.visibility = "visible";
+
 btnLogin.addEventListener("click", (event) => {
   // Prevent form for submit
   event.preventDefault();
@@ -149,6 +171,13 @@ btnLogin.addEventListener("click", (event) => {
     }`;
     containerApp.style.opacity = 100;
     containerApp.style.visibility = "visible";
+
+    const date = new Date();
+    const day = `${date.getDate()}`.padStart(2,0);
+    const month = `${date.getMonth() + 1}`.padStart(2,0);
+    const year = date.getFullYear();
+
+    labelDate.textContent = `${day}/${month}/${year}`;
 
     inputLoginUsername.value = inputLoginPin.value = "";
     inputLoginPin.blur();
@@ -191,18 +220,22 @@ btnTransfer.addEventListener("click", (e) => {
   ) {
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
+    currentAccount.movementsDates.push(new Date().toISOString());
+    receiverAcc.movementsDates.push(new Date().toISOString());
     updateUi(currentAccount);
   }
 });
 
 btnLoan.addEventListener("click", (e) => {
   e.preventDefault();
-  let loadAmount = Number(inputLoanAmount.value);
+  let loadAmount = Math.floor(inputLoanAmount.value);
   let loadAmountCondition = currentAccount.movements.some(
     (mov) => mov >= loadAmount * 0.1
   );
   if (loadAmount > 0 && loadAmountCondition) {
     currentAccount.movements.push(loadAmount);
+    currentAccount.movementsDates.push(new Date().toISOString());
+    
     inputLoanAmount.value = "";
     updateUi(currentAccount);
   }

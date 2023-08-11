@@ -1,4 +1,9 @@
 "use strict";
+import {apyKey} from "./util.js"
+console.log(apyKey);
+
+
+
 const accountse = {
   owner: "Jonas Schmedtmann",
   movements: [200, 455, -307, 25000, -642, -134, 80, 1300],
