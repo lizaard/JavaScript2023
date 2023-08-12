@@ -61,5 +61,44 @@ const accountses = [account5, account6];
 // const month = date.getMonth() + 1;
 // const year = date.getFullYear();
 
-
 // scriptOne.labelDate.textContent = `${day}/${month}/${year}`;
+const future1 = new Date(2037, 10, 19, 15, 23);
+const future2 = new Date(2047, 10, 19, 15, 23);
+
+const calcDayPassed = (date1, date2) => (date2 - date1) / (1000 * 60 * 60 * 24);
+
+const days1 = calcDayPassed(future1, future2);
+console.log(days1);
+console.log(new Date(days1));
+
+const mumber = 155789933123.23;
+
+const options = {
+  style: "currency",
+  unit: "celsius",
+  currency: "EUR",
+};
+const numberFormat = new Intl.NumberFormat(navigator.language, options).format(
+  mumber
+);
+console.log(numberFormat);
+
+const ingredients = ["olives", "spinach"];
+const pizzaTimer = setTimeout(
+  (ing1, ing2) => {
+    console.log(`Here is your pizza with ${ing1} and ${ing2} pizza`);
+  },
+  3000,
+  ...ingredients
+);
+
+console.log("wait...");
+if (ingredients.includes("spinach")) {
+  clearTimeout(pizzaTimer);
+}
+
+
+// setInterval(() => {
+//   const date = new Date();
+//   console.log(date);
+// },1000)
