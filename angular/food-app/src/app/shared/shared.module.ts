@@ -8,7 +8,7 @@ import { SpinnerComponent } from './spinner/spinner.component';
   imports: [FormsModule, ReactiveFormsModule, HttpClientModule],
   declarations: [DropdownDirective, SpinnerComponent],
   exports: [
-    FormsModule,
+FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
     SpinnerComponent,
