@@ -1,11 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
 import { AuthInterceptorInterceptor } from './auth-interceptor.interceptor';
-
+import { HttpClientModule, HttpClient } from '@angular/common/http'
 describe('AuthInterceptorInterceptor', () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
-      providers: [AuthInterceptorInterceptor],
+      imports: [ HttpClientModule],
+      providers: [AuthInterceptorInterceptor,HttpClient],
     }),
   );
 
